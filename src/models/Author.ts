@@ -1,5 +1,5 @@
 type Author = {
-    id:number,
+    id?:number,
     surname:string,
     name:string,
     bio:string
