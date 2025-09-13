@@ -81,4 +81,51 @@ router.delete("/:id", (req, res) => {
   }
 });
 
+router.get('/', (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      search,
+      sortBy,
+      sortOrder = 'asc',
+      page = 1,
+      limit = 10
+    } = req.query;
+
+
+    const queryParams: AuthorServices.AuthorQueryParams = {
+      name: name as string,
+      surname: email as string,
+      search: search as string,
+      sortBy: sortBy as string,
+      sortOrder: sortOrder as 'asc' | 'desc',
+      page: parseInt(page as string),
+      limit: parseInt(limit as string)
+    };
+
+    const result = AuthorServices.queryAuthor(queryParams);
+
+if(result)
+    res.status(200).json({
+      success: true,
+      data: result.data,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        pages: Math.ceil(result.total / result.limit),
+        hasNext: result.page * result.limit < result.total,
+        hasPrev: result.page > 1
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+
 export default router;

@@ -43,7 +43,7 @@ export const updateAuthor = (
 export const deleteAuthor = ((id:number) => authors.filter((author) => author.id !== id));
 
 
-interface AuthorQueryParams {
+export interface AuthorQueryParams {
   name?: string;
   surname?:string,
   bio?:string;
