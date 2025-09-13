@@ -71,3 +71,86 @@ export const deleteBook = ((id:number):Book[] => {
     return books
 }) 
   
+export interface BookQueryParams {
+  title?: string;
+  authorId?: number;
+  genre?: string;
+  minYear?: number;
+  maxYear?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export const queryBooks = (params: BookQueryParams): { data: Book[]; total: number; page: number; limit: number } => {
+  let filteredBooks = [...books];
+
+  if (params.title) {
+    filteredBooks = filteredBooks.filter(book => 
+      book.title.toLowerCase() === params.title!.toLowerCase()
+    );
+  }
+
+  if (params.authorId) {
+    filteredBooks = filteredBooks.filter(book => book.authorId === params.authorId);
+  }
+
+  if (params.genre) {
+    filteredBooks = filteredBooks.filter(book => 
+      book.genre?.toLowerCase() === params.genre!.toLowerCase()
+    );
+  }
+
+
+  if (params.minYear) {
+    filteredBooks = filteredBooks.filter(book => 
+      book.year && book.year >= params.minYear!
+    );
+  }
+
+  if (params.maxYear) {
+    filteredBooks = filteredBooks.filter(book => 
+      book.year && book.year <= params.maxYear!
+    );
+  }
+
+
+  if (params.search) {
+    const searchTerm = params.search.toLowerCase();
+    filteredBooks = filteredBooks.filter(book =>
+      book.title.toLowerCase().includes(searchTerm) ||
+      (book.genre && book.genre.toLowerCase().includes(searchTerm))
+    );
+  }
+
+
+  if (params.sortBy) {
+    const sortField = params.sortBy as keyof Book;
+    filteredBooks.sort((a, b) => {
+      const aValue = a[sortField] || '';
+      const bValue = b[sortField] || '';
+      
+      if (aValue < bValue) return params.sortOrder === 'desc' ? 1 : -1;
+      if (aValue > bValue) return params.sortOrder === 'desc' ? -1 : 1;
+      return 0;
+    });
+  }
+
+  const total = filteredBooks.length;
+  const page = params.page || 1;
+  const limit = params.limit || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+
+  const paginatedBooks = filteredBooks.slice(startIndex, endIndex);
+
+  return {
+    data: paginatedBooks,
+    total,
+    page,
+    limit
+  };
+};
