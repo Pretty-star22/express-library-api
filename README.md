@@ -118,21 +118,14 @@ Installation
 Clone the repository:
 
 bash
-git clone <repository-url>
-cd bookstore-api
+git clone https://github.com/Pretty-star22/express-library-api
+cd express-library-api
 Install dependencies:
 
 bash
 npm install
 Build the project:
 
-bash
-npm run build
-Start the server:
-
-bash
-npm start
-For development with auto-reload:
 
 bash
 npm run dev
