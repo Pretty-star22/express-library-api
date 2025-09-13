@@ -33,8 +33,8 @@ export const validateBook = ((book:Partial<Book>)=> {
 
 
 let books:Book[] = [
-    {title:"big magic", author:"", year: 2000 , genre:"self-help", id:1, authorId:1},
-    {title:"go giver", author:"", year: 2020 , genre:"self-help", id:2, authorId:2},
+    {title:"big magic", author:"", year: 1998 , genre:"self-help", id:1, authorId:1},
+    {title:"go giver", author:"", year: 2020 , genre:"philosophy", id:2, authorId:2},
 ]
 let nextBookId = 3;
 

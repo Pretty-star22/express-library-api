@@ -159,9 +159,9 @@ Pretty Mathabathe (fiction)
 Kanyo Sibiya (fantasy)
 
 Books
-"big magic" by Author 1 (self-help, 2000)
+"big magic" by Author 1 (self-help, 1998)
 
-"kind" by Author 2 (self-help, 2020)
+"go giver" by Author 2 (philosophy, 2020)
 
 Future Enhancements
 Database integration (PostgreSQL/MongoDB)
