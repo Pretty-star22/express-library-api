@@ -4,11 +4,58 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", (req, res) => {
+  const hasQueryParams = Object.keys(req.query).length > 0;
+  if(!hasQueryParams){
   let authors = AuthorServices.getAllAuthors();
   res.status(200).json({
     success: true,
     data: authors,
   });
+}else{
+  try{
+  const {
+    name,
+    email,
+    search,
+    sortBy,
+    sortOrder = "asc",
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+const queryParams: AuthorServices.AuthorQueryParams = {
+  name: name as string,
+  surname: req.query.surname as string,
+  bio: req.query.bio as string, 
+  search: search as string,
+  sortBy: sortBy as string,
+  sortOrder: sortOrder as "asc" | "desc",
+  page: page ? parseInt(page as string) : 1,
+  limit: limit ? parseInt(limit as string) : 10,
+};
+
+  const result = AuthorServices.queryAuthor(queryParams);
+
+  if (result)
+    res.status(200).json({
+      success: true,
+      data: result.data,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        pages: Math.ceil(result.total / result.limit),
+        hasNext: result.page * result.limit < result.total,
+        hasPrev: result.page > 1,
+      },
+    });
+} catch (error) {
+  res.status(500).json({
+    success: false,
+    message: "Internal server error",
+  });
+}
+}
 });
 
 router.get("/:id", (req, res) => {
@@ -81,51 +128,7 @@ router.delete("/:id", (req, res) => {
   }
 });
 
-router.get('/', (req, res) => {
-  try {
-    const {
-      name,
-      email,
-      search,
-      sortBy,
-      sortOrder = 'asc',
-      page = 1,
-      limit = 10
-    } = req.query;
 
-
-    const queryParams: AuthorServices.AuthorQueryParams = {
-      name: name as string,
-      surname: email as string,
-      search: search as string,
-      sortBy: sortBy as string,
-      sortOrder: sortOrder as 'asc' | 'desc',
-      page: parseInt(page as string),
-      limit: parseInt(limit as string)
-    };
-
-    const result = AuthorServices.queryAuthor(queryParams);
-
-if(result)
-    res.status(200).json({
-      success: true,
-      data: result.data,
-      pagination: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        pages: Math.ceil(result.total / result.limit),
-        hasNext: result.page * result.limit < result.total,
-        hasPrev: result.page > 1
-      }
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
 
 
 export default router;

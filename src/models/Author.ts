@@ -54,49 +54,62 @@ export interface AuthorQueryParams {
   limit?: number;
 }
 
-export const queryAuthor = (params:AuthorQueryParams) => {
-  let filteredAuthors = [...authors]
+export const queryAuthor = (params: AuthorQueryParams) => {
+  let filteredAuthors = [...authors];
 
-  if(params.name){
-    filteredAuthors = filteredAuthors.filter(author => author.name.toLowerCase() !== params.name?.toLocaleLowerCase())
+
+  if (params.name) {
+    filteredAuthors = filteredAuthors.filter(
+      (author) => author.name.toLowerCase() === params.name!.toLowerCase()
+    );
   }
 
-  if(params.surname){
-    filteredAuthors = filteredAuthors.filter(author => author.surname.toLowerCase() !== params.surname?.toLocaleLowerCase() )
+  if (params.surname) {
+    filteredAuthors = filteredAuthors.filter(
+      (author) => author.surname.toLowerCase() === params.surname!.toLowerCase()
+    );
   }
 
- if(params.search){
-  const searchTerm = params.search.toLocaleLowerCase()
-filteredAuthors= filteredAuthors.filter((author) => author.name.toLowerCase().includes(searchTerm) || !author.surname.toLowerCase().includes(searchTerm) || author.bio.toLowerCase().includes(searchTerm))
+  if (params.bio) {
+    filteredAuthors = filteredAuthors.filter(
+      (author) => author.bio.toLowerCase() === params.bio!.toLowerCase()
+    );
+  }
 
- }
- if (params.sortBy) {
-   const sortField = params.sortBy as keyof Author;
-   filteredAuthors.sort((a, b) => {
-     const aValue = a[sortField] || "";
-     const bValue = b[sortField] || "";
+  if (params.search) {
+    const searchTerm = params.search.toLowerCase();
+    filteredAuthors = filteredAuthors.filter(
+      (author) =>
+        author.name.toLowerCase().includes(searchTerm) ||
+        author.surname.toLowerCase().includes(searchTerm) ||
+        author.bio.toLowerCase().includes(searchTerm)
+    );
+  }
 
-     if (aValue < bValue) return params.sortOrder === "desc" ? 1 : -1;
-     if (aValue > bValue) return params.sortOrder === "desc" ? -1 : 1;
-     return 0;
-   });
+  if (params.sortBy) {
+    const sortField = params.sortBy as keyof Author;
+    filteredAuthors.sort((a, b) => {
+      const aValue = String(a[sortField] || "");
+      const bValue = String(b[sortField] || "");
 
-   const total = filteredAuthors.length;
-   const page = params.page || 1;
-   const limit = params.limit || 10;
-   const startIndex = (page - 1) * limit;
-   const endIndex = startIndex + limit;
+      if (aValue < bValue) return params.sortOrder === "desc" ? 1 : -1;
+      if (aValue > bValue) return params.sortOrder === "desc" ? -1 : 1;
+      return 0;
+    });
+  }
 
-   const paginatedAuthors = filteredAuthors.slice(startIndex, endIndex);
+  const total = filteredAuthors.length;
+  const page = params.page || 1;
+  const limit = params.limit || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
 
-   return {
-     data: paginatedAuthors,
-     total,
-     page,
-     limit,
-   };
- }
+  const paginatedAuthors = filteredAuthors.slice(startIndex, endIndex);
 
-
-
-} 
+  return {
+    data: paginatedAuthors,
+    total,
+    page,
+    limit,
+  };
+};
